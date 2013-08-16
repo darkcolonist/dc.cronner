@@ -31,6 +31,8 @@ class Cronnables extends BaseCronnables {
         'foreign' => 'cronnable_id'));
   }
 
+  static $duration = 0;
+
   public function execute(){
     // curl source: http://www.jonasjohn.de/snippets/php/curl-example.htm
     // is cURL installed yet?
@@ -59,6 +61,8 @@ class Cronnables extends BaseCronnables {
     $log->result = $output;
     $log->duration = Helper_Date::timer_end();
     $log->save();
+
+    Cronnables::$duration = $log->duration;
 
     return $output;
   }
