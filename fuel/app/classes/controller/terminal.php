@@ -14,6 +14,7 @@ class Controller_Terminal extends Fuel\Core\Controller_Template{
 
     $this->template->js = "";
     $this->template->js .= \Fuel\Core\Asset::js("jquery-1.9.1.min.js");
+    $this->template->js .= \Fuel\Core\Asset::js("moment.min.js");
   }
 
   public function action_execute($group_name){

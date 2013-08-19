@@ -12,6 +12,7 @@
  * @property decimal $attempts
  * @property timestamp $last_attempt
  * @property timestamp $added
+ * @property BOOL $muted
  * 
  * @package    ##PACKAGE##
  * @subpackage ##SUBPACKAGE##
@@ -62,6 +63,13 @@ abstract class BaseCronnables extends Doctrine_Record
              'type' => 'timestamp',
              'notnull' => false,
              'default' => 'CURRENT_TIMESTAMP',
+             'primary' => false,
+             'autoincrement' => false,
+             ));
+        $this->hasColumn('muted', 'BOOL', null, array(
+             'type' => 'BOOL',
+             'notnull' => false,
+             'default' => '0',
              'primary' => false,
              'autoincrement' => false,
              ));

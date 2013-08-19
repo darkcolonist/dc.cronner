@@ -26,4 +26,29 @@ class CronnableLogs extends BaseCronnableLogs
 
     $this->execution = date("Y-m-d H:i:s");
   }
+
+  static function flush_old($cronnable_id, $log_limit){
+    // flush old logs..
+    $lowest_log_q = "select min(id) as `last`"
+      . " from (select id"
+      . " FROM cronnable_logs"
+      . " where cronnable_id = {$cronnable_id}"
+      . " order by id desc limit {$log_limit});";
+    $lowest_log = Doctrine_Manager::connection()->execute($lowest_log_q)->fetch();
+    $lowest_log = $lowest_log['last'];
+    $lowest_log = $lowest_log - $log_limit;
+
+//    echo "[{$cronnable_id}] lowest: ".$lowest_log."<br />";
+
+    if($lowest_log > 0){
+      $q = Doctrine_Query::create()
+              ->delete("CronnableLogs")
+              ->where("cronnable_id = ?", $cronnable_id)
+              ->andWhere("id < ?", $lowest_log);
+      
+      $q->execute();
+
+//      echo "[{$cronnable_id}] q: ".$q->getSqlQuery()."<br />";;
+    }
+  }
 }

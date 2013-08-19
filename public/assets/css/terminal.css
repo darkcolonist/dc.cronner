@@ -40,3 +40,10 @@ div.result table td.graph{ padding: 0px; background-image: url('./images/grid-bo
 .pane #output *{ font-family: monospace; margin: 0;}
 .pane #output .executing{ color: yellow; font-style: italic }
 .pane #output .done{ color: inherit; font-style: inherit }
+
+.pane form{ margin: 0 }
+.pane form fieldset{ border: none; border-bottom: 1px dotted #00BF1A; font-size: .9em; }
+.pane form fieldset input{ margin: 0; border: none; color: inherit; background-color: transparent; }
+.pane form fieldset input.hidden{ display: none; }
+.pane form.singleline fieldset input.span-8{ width: 78.4%; display: inline; }
+.pane form.singleline fieldset input.span-2{ width: 19.6%; display: inline; }

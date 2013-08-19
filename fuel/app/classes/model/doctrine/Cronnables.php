@@ -14,6 +14,8 @@
  * @version    SVN: $Id: Builder.php 7490 2010-03-29 19:53:27Z jwage $
  */
 class Cronnables extends BaseCronnables {
+  public $log_limit = 100;
+
   public function assignDefaultValues($overwrite = false) {
     parent::assignDefaultValues($overwrite);
     
@@ -63,6 +65,8 @@ class Cronnables extends BaseCronnables {
     $log->save();
 
     Cronnables::$duration = $log->duration;
+
+    CronnableLogs::flush_old($this->id, $this->log_limit);
 
     return $output;
   }
