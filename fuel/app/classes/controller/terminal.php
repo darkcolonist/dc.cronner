@@ -10,11 +10,14 @@ class Controller_Terminal extends Fuel\Core\Controller_Template{
 
     $this->template->css = "";
     $this->template->css .= \Fuel\Core\Asset::css("bootstrap.css");
+    $this->template->css .= \Fuel\Core\Asset::css("jquery.toolbars.css");
+    $this->template->css .= \Fuel\Core\Asset::css("bootstrap.icons.css");
     $this->template->css .= \Fuel\Core\Asset::css("terminal.css");
 
     $this->template->js = "";
     $this->template->js .= \Fuel\Core\Asset::js("jquery-1.9.1.min.js");
     $this->template->js .= \Fuel\Core\Asset::js("moment.min.js");
+    $this->template->js .= \Fuel\Core\Asset::js("jquery.toolbar.min.js");
   }
 
   public function action_execute($group_name){
@@ -23,6 +26,10 @@ class Controller_Terminal extends Fuel\Core\Controller_Template{
     if($group == null){
       die("group cannot be found!");
     }else{
+      // lazy load cronnables in group
+      $group->Cronnables;
+
+      // render template
       $this->template->group = $group;
     }
   }

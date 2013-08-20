@@ -29,13 +29,13 @@
       <?= Fuel\Core\Form::fieldset_close() ?>
       <?= Fuel\Core\Form::close() ?>
       <table id="cronnables" class="data">
-        <? foreach($group->Cronnables as $key => $cronnable): ?>
-          <tr class="<?= $key % 2 == 0 ? "even" : "odd"?>">
-            <td><?= $cronnable->url ?></td>
-            <td id="interval-<?= $cronnable->id ?>" class="align-right"></td>
-          </tr>
-        <? endforeach ?>
+        <tr class="empty"><td>please wait while we load your cronnables...</td></tr>
       </table>
+
+      <div id="cronnable-toolbar">
+        <a href="#mute" title="mute (toggle)" class="mute"><i class="icon-ban-circle"></i></a>
+        <a href="#delete" title="delete" class="delete"><i class="icon-trash"></i></a>
+      </div>
     </div>
     <div class="span8 pane">
       <div id="output"></div>
@@ -52,10 +52,14 @@
   <script type="text/javascript">
     Package = {
       _moment : null,
+      _group : null,
+      _cronnables : null,
+      _intervals : null,
+      _iteration : null,
       output : function(text){
         $("#output").prepend("<p><span class='datetime'>"+Package.currentTime("HH:mm:ss")+"</span>] "+text+"</p>");
       }, execute : function(cronnable, ix){
-        Package.output(cronnables[i].url+" | status: [<span id='i"+ix+"' class='executing'>executing</span>]");
+        Package.output(Package._cronnables[i].url+" | status: [<span id='i"+ix+"' class='executing'>executing</span>]");
 
         $.getJSON($("[name=baseurl]").val()+"api/cronnables/execute/"+
               cronnable+".json", function(data){
@@ -64,10 +68,70 @@
         });
       },
       init : function(){
+        $("#cronnable-toolbar").hide();
+
         Package._moment = moment("<?= date("Y-m-d H:i:s") ?>");
           // .format("YYYY-MM-DD HH:mm:ss");
 
+        // handle delegates
         Package.initAddNewCronnable();
+        Package.initFlagCronnable();
+
+        // setup variables
+        Package._group = <?= json_encode($group->toArray()) ?>;
+        Package._cronnables = Package._group.Cronnables;
+
+        // setup intervals
+        Package._intervals = [];
+        Package._iteration = 1;
+
+        for(i = 0 ; i < Package._cronnables.length ; i ++){
+          // render dom
+          Package.addCronnableRowDom(Package._cronnables[i]);
+
+          Package._intervals[Package._cronnables[i].id] = Package._cronnables[i].interval;
+
+          // initial execute...
+          if(Package._cronnables[i].muted == 0){
+            Package.execute(Package._cronnables[i].id, Package._iteration);
+            Package._iteration++;
+          }
+        }
+
+        $("#cronnables .empty").remove();
+
+        setInterval(Package.iterator, 1000);
+      },
+      initFlagCronnable : function(){
+        $(document).on("click", "a.tool-item", function(e){
+          e.preventDefault();
+
+          $.getJSON($(e.currentTarget).attr("href"), function(data){
+            if(data.status == 0){
+              if(data.method == "delete"){
+                // delete from table (DOM)
+                $("#cronnable-row-"+data.cronnable.id).remove();
+
+                // delete from intervals
+                Package._intervals.splice(data.cronnable.id, 1);
+
+                // delete from cronnables
+                for(var key in Package._cronnables){
+                  if(Package._cronnables[key].id == data.cronnable.id){
+                    Package._cronnables.splice(key, 1);
+                  }
+                }
+              }else if(data.method == "mute"){
+                // update cronnable
+                for(var key in Package._cronnables){
+                  if(Package._cronnables[key].id == data.cronnable.id){
+                    Package._cronnables[key] = data.cronnable;
+                  }
+                }
+              }
+            }
+          });
+        });
       },
       initAddNewCronnable : function(){
         $("#frmAddNewCronnable").on("submit", function(e){
@@ -75,19 +139,32 @@
 
           $.post($(e.currentTarget).attr("action"), $("#frmAddNewCronnable").serialize(), function(data){
 //            data = JSON.parse(data);
-            intervals[data.cronnable.id] = data.cronnable.interval;
-            cronnables.push(data.cronnable);
+            if(data.status == 0){
+              Package._intervals[data.cronnable.id] = data.cronnable.interval;
+              Package._cronnables.push(data.cronnable);
 
-            // get class
-            var row_class = $("#cronnables tr:last").hasClass("odd") ? "even" : "odd";
+              Package.addCronnableRowDom(data.cronnable);
+            }
 
-            var new_cronnable_dom =
-                '<tr class="'+row_class+'">'
-                  +'<td>'+data.cronnable.url+'</td>'
-                  +'<td id="interval-'+data.cronnable.id+'" class="align-right"></td>'
-                +'</tr>';
-            $("#cronnables").append(new_cronnable_dom);
           });
+        });
+      },
+      addCronnableRowDom : function(cronnable){
+        // get class
+        var row_class = $("#cronnables tr:last").hasClass("odd") ? "even" : "odd";
+
+        var new_cronnable_dom =
+            '<tr id="cronnable-row-'+cronnable.id+'" class="'+row_class+'">'
+              +'<td><span class="cronnable-url" id="cronnable-url-'+cronnable.id+'">'+cronnable.url+'</span></td>'
+              +'<td id="interval-'+cronnable.id+'" class="align-right"></td>'
+            +'</tr>';
+        $("#cronnables").append(new_cronnable_dom);
+        $("#cronnable-toolbar").find("a.delete").attr("href", "<?= \Fuel\Core\Uri::base() ?>api/cronnables/delete/"+cronnable.id+".json");
+        $("#cronnable-toolbar").find("a.mute").attr("href", "<?= \Fuel\Core\Uri::base() ?>api/cronnables/mute/"+cronnable.id+".json");
+        $("#cronnable-url-"+cronnable.id).toolbar({
+          content: '#cronnable-toolbar',
+          position: 'top',
+          hideOnClick: true
         });
       },
       tick : function(){
@@ -97,50 +174,34 @@
       },
       currentTime : function(format){
         return Package._moment.format(format);
+      },
+      iterator : function(){
+        for(i = 0 ; i < Package._cronnables.length ; i ++){
+          if(Package._cronnables[i].muted == 1){
+            $("#interval-"+Package._cronnables[i].id).html("<em class='gray'>muted</em>");
+          }else{
+            if(Package._intervals[Package._cronnables[i].id] == 0){
+              Package.execute(Package._cronnables[i].id, Package._iteration);
+
+              // reset interval!
+              Package._intervals[Package._cronnables[i].id] = Package._cronnables[i].interval;
+              Package._iteration++;
+            }
+
+            Package._intervals[Package._cronnables[i].id]--;
+
+            $("#interval-"+Package._cronnables[i].id).html(
+                  Package._intervals[Package._cronnables[i].id]+"s");
+          }
+        }
+
+        Package.tick();
       }
     };
   </script>
 
   <script type="text/javascript">
-    // setup variables
-    var group = <?= json_encode($group->toArray()) ?>;
-    var cronnables = group.Cronnables;
-    
     Package.init();
-
-    // setup intervals
-    var intervals = {};
-    var iteration = 1;
-
-    for(i = 0 ; i < cronnables.length ; i ++){
-      intervals[cronnables[i].id] = cronnables[i].interval;
-
-      // initial execute...
-      Package.execute(cronnables[i].id, iteration);
-      iteration++;
-    }
-
-    setInterval(function(){
-      for(i = 0 ; i < cronnables.length ; i ++){
-        if(intervals[cronnables[i].id] == 0){
-          Package.execute(cronnables[i].id, iteration);
-          
-          // reset interval!
-          intervals[cronnables[i].id] = cronnables[i].interval;
-          iteration++;
-        }
-
-        intervals[cronnables[i].id]--;
-
-      }
-
-      for(i = 0 ; i < cronnables.length ; i ++){
-        $("#interval-"+cronnables[i].id).html(
-                intervals[cronnables[i].id]+"s");
-      }
-
-      Package.tick();
-    }, 1000);
   </script>
 </body>
 </html>

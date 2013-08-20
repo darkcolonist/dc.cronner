@@ -1,32 +1,5 @@
-*{ font-family: tahoma; background-color: black; color: #00BF1A; }
+body{ font-family: tahoma; background-color: black; color: #00BF1A; }
 
-span{ background-color: transparent; }
-span.error{ color: red; font-weight: bold; }
-
-a{ text-decoration: none; color: #007F11; }
-a:hover{text-decoration: none; color: #3FFF59;}
-
-h3{ font-size: 1.1em; text-align:center; border-bottom: 3px solid #00BF1A; }
-h4.footer { clear: both; border-top: 1px solid  #00BF1A; font-size: .6em; text-align: center; font-weight: normal; }
-
-fieldset{ border: 1px solid #00BF1A; font-size: .9em; }
-fieldset div.textarea{ border: 1px dotted #00BF1A; width: 100%; font-size: .7em; height: 150px; line-height: .95em; overflow-x: hidden; overflow-y: auto;}
-fieldset div.textarea pre{ margin: 0; }
-fieldset.loading{ display: none; height: 0px; }
-
-legend{ font-weight: bold; font-size: 12px; }
-legend a{ font-weight: bold; font-size: 14px; }
-
-img.reload-indicator{ visibility: hidden; }
-
-div.main{ overflow: auto; }
-
-div.result table{ border: 1px dotted #00BF1A; border-collapse: collapse; font-size: .6em; width: 100%; }
-div.result table th,
-div.result table td{ border: 1px dotted #00BF1A; padding: 0 2px; background-color: transparent; }
-div.result table td.graph{ padding: 0px; background-image: url('./images/grid-both.png'); width: 191px; }
-
-/* mine */
 .pane{ border: 1px dotted #00BF1A; }
 .pane table td{ padding: 2px 3px; margin: 0 }
 .pane table td{ line-height: .9em; }
@@ -40,6 +13,7 @@ div.result table td.graph{ padding: 0px; background-image: url('./images/grid-bo
 .pane #output *{ font-family: monospace; margin: 0;}
 .pane #output .executing{ color: yellow; font-style: italic }
 .pane #output .done{ color: inherit; font-style: inherit }
+.pane #output p{ line-height: 11px; }
 
 .pane form{ margin: 0 }
 .pane form fieldset{ border: none; border-bottom: 1px dotted #00BF1A; font-size: .9em; }
@@ -47,3 +21,8 @@ div.result table td.graph{ padding: 0px; background-image: url('./images/grid-bo
 .pane form fieldset input.hidden{ display: none; }
 .pane form.singleline fieldset input.span-8{ width: 78.4%; display: inline; }
 .pane form.singleline fieldset input.span-2{ width: 19.6%; display: inline; }
+
+.pane span.cronnable-url{ cursor: pointer; opacity: .8; }
+.pane span.cronnable-url:hover{ opacity: 1; }
+
+.pane em.gray{ opacity: .5; }
