@@ -28,6 +28,7 @@
               array("class" => "hidden")) ?>
       <?= Fuel\Core\Form::fieldset_close() ?>
       <?= Fuel\Core\Form::close() ?>
+      <i class="icon-exclamation-sign" id="error-icon"></i>
       <table id="cronnables" class="data">
         <tr class="empty"><td>please wait while we load your cronnables...</td></tr>
       </table>
@@ -67,6 +68,14 @@
           $("#i"+ix).removeClass("executing").addClass("done").html("complete "+data.duration+"s");
         });
       },
+      fixNotificationPosition : function(){
+        // reposition the exclamation sign / notification sign
+        $("#error-icon").css({
+          position: "absolute",
+          left: $("[name=interval]").position().left + $("[name=interval]").width() + 20,
+          top: $("[name=interval]").position().top - 3
+        });
+      },
       init : function(){
         $("#cronnable-toolbar").hide();
 
@@ -99,6 +108,9 @@
         }
 
         $("#cronnables .empty").remove();
+
+        $(window).resize(Package.fixNotificationPosition);
+        Package.fixNotificationPosition();
 
         setInterval(Package.iterator, 1000);
       },
@@ -137,6 +149,8 @@
         $("#frmAddNewCronnable").on("submit", function(e){
           e.preventDefault();
 
+          $("#error-icon").hide();
+
           $.post($(e.currentTarget).attr("action"), $("#frmAddNewCronnable").serialize(), function(data){
 //            data = JSON.parse(data);
             if(data.status == 0){
@@ -144,8 +158,10 @@
               Package._cronnables.push(data.cronnable);
 
               Package.addCronnableRowDom(data.cronnable);
+            }else{
+              $("#error-icon").attr("title", data.message);
+              $("#error-icon").show();
             }
-
           });
         });
       },

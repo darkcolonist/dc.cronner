@@ -81,7 +81,7 @@ class Controller_Api_Cronnables extends Fuel\Core\Controller_Rest
     $validation = Fuel\Core\Validation::forge();
 
     $validation->add_field("url", "URL", "valid_url");
-    $validation->add_field("interval", "Interval", "numeric_between[1,1000]");
+    $validation->add_field("interval", "Interval", "numeric_between[1,10000]");
 
     if($validation->run()){
       $group = Doctrine::getTable("Groups")->findOneBy("name", Fuel\Core\Input::post("group_name"));
@@ -103,7 +103,7 @@ class Controller_Api_Cronnables extends Fuel\Core\Controller_Rest
     }else{
       $data = array(
         "status" => 1,
-        "message" => "error in the inputs!"
+        "message" => rtrim(strip_tags(str_replace("</li>", "</li>\n", $validation->show_errors())), "\n")
       );
     }
 
