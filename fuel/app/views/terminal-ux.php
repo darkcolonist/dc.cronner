@@ -45,6 +45,7 @@
 
   <div class="ui-layout-center">
     <div id="output"></div>
+    <div class="floating-container"></div>
   </div>
 
   <div class="ui-layout-south no-padding">
@@ -53,10 +54,6 @@
 
   <?= isset($js) ? $js : null ?>
   <?= isset($js_scripts) ? "<script type='text/javascript'>".$js_scripts."</script>" : null ?>
-
-  <script type="text/javascript">
-    
-  </script>
 
   <script type="text/javascript">
     Package.i_serverTime = "<?= date("Y-m-d H:i:s") ?>";

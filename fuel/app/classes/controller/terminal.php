@@ -10,10 +10,15 @@ class Controller_Terminal extends Fuel\Core\Controller_Template{
 
     $this->template->css = "";
     $this->template->css .= \Fuel\Core\Asset::css("bootstrap.css");
-    $this->template->css .= \Fuel\Core\Asset::css("jquery.toolbars.css");
     $this->template->css .= \Fuel\Core\Asset::css("bootstrap.icons.css");
+    $this->template->css .= \Fuel\Core\Asset::css("jquery.toolbars.css");
     $this->template->css .= \Fuel\Core\Asset::css("jquery.layout.default.1.3.0.css");
     $this->template->css .= \Fuel\Core\Asset::css("jquery.layout.custom-1.1.3.0.css");
+    
+    Fuel\Core\Asset::add_path("assets.ui.vader");
+    
+    $this->template->css .= \Fuel\Core\Asset::css("jquery-ui.min.css");
+    $this->template->css .= \Fuel\Core\Asset::css("jquery.ui.theme.css");
     $this->template->css .= \Fuel\Core\Asset::css("terminal.css");
 
     $this->template->js = "";
@@ -37,5 +42,12 @@ class Controller_Terminal extends Fuel\Core\Controller_Template{
       // render template
       $this->template->group = $group;
     }
+  }
+  
+  public function action_output($log_id){
+    $log = Doctrine::getTable("CronnableLogs")->find($log_id);
+    if($log == null) die("cannot find output request.");
+    
+    die($log->result);
   }
 }

@@ -53,3 +53,10 @@ body{ color: #ddd; }
 .ui-layout-container em.gray{ opacity: .5; }
 
 .ui-layout-container #error-icon{ display: none; }
+
+.ui-layout-container .floating-container { display: none; }
+.ui-layout-container .floating-container-clone iframe{ overflow: auto; width: 100%; background: #fff; height: 100%; }
+
+.ui-dialog .ui-dialog-titlebar{ padding-left: 1px; padding-top: 0; padding-right: 0; padding-bottom: 0; font-size: 10px;}
+
+.ui-dialog .ui-dialog-content{ padding-top: 0; padding-left: 2px; padding-right: 8px; }

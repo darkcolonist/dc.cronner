@@ -26,7 +26,7 @@ Package = {
       // update iterator status on complete
       $("#i"+ix).removeClass("executing").addClass("done").html("<a href='"+
         Package.getUrl("terminal/output/"+data.log.id)
-        +"'>complete</a> "+data.duration+"s");
+        +"' class='btn-result' title='["+ data.log.id + "] " + data.timestamp +" - "+ data.cronnable.url +"'>complete</a> "+data.duration+"s");
     });
   },
   fixNotificationPosition : function(){
@@ -59,6 +59,7 @@ Package = {
     // handle delegates
     Package.initAddNewCronnable();
     Package.initFlagCronnable();
+    Package.initResultPopup();
 
     // setup variables
     Package._group = Package.i_groupData;
@@ -87,6 +88,33 @@ Package = {
     Package.fixNotificationPosition();
 
     setInterval(Package.iterator, 1000);
+  },
+  initResultPopup : function(){
+    
+    var resultPopupCounter = 0;
+    
+    $(document).on("click", "a.btn-result", function(e){
+      e.preventDefault();
+      var iframe = $("<iframe></iframe>").attr("src", $(e.currentTarget).attr("href"));
+      
+      var the_id = "floating-result-"+resultPopupCounter;
+      
+      $(".floating-container").clone()
+        .removeClass("floating-container")
+        .addClass("floating-container-clone")
+        .attr("id", the_id)
+        .append(iframe).dialog({
+          title: $(e.currentTarget).attr("title"),
+          close: function(event, ui){
+            $(this).remove();
+          },
+          width: 550,
+          height: 350
+        });
+  
+      resultPopupCounter++;
+  
+    });
   },
   initFlagCronnable : function(){
     $(document).on("click", "a.tool-item", function(e){

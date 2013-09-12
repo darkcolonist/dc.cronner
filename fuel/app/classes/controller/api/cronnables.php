@@ -94,7 +94,7 @@ class Controller_Api_Cronnables extends Fuel\Core\Controller_Rest
         $cron->interval = Fuel\Core\Input::post("interval");
         $cron->save();
 
-        $data["cronnable"] = $cron->toArray();
+        $data["cronnable"] = $cron->toFormattedArray();
       }else{
         $data = array(
           "status" => 1,
