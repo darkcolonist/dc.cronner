@@ -27,4 +27,14 @@ class Groups extends BaseGroups {
         'foreign' => 'group_id'));
   }
 
+  public function toFormattedArray($deep = true, $prefixKey = false) {
+    $arr = parent::toArray($deep, $prefixKey);
+    
+    foreach($arr["Cronnables"] as $key => $c_tmp){
+      $arr["Cronnables"][$key]["f_url"] = Helper_String::truncate_mid($c_tmp["url"], 50);
+    }
+    
+    return $arr;
+  }
+  
 }

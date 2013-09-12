@@ -30,7 +30,9 @@ class Controller_Welcome extends Controller
 	 */
 	public function action_index()
 	{
-		return Response::forge(View::forge('welcome/index'));
+    Fuel\Core\Response::redirect("terminal/list");
+    
+		// return Response::forge(View::forge('welcome/index'));
 	}
 
 	/**

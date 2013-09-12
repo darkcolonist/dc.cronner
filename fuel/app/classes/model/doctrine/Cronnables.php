@@ -34,7 +34,8 @@ class Cronnables extends BaseCronnables {
   }
 
   static $duration = 0;
-
+  static $last_log = null;
+  
   public function execute(){
     // curl source: http://www.jonasjohn.de/snippets/php/curl-example.htm
     // is cURL installed yet?
@@ -63,11 +64,21 @@ class Cronnables extends BaseCronnables {
     $log->result = $output;
     $log->duration = Helper_Date::timer_end();
     $log->save();
+    
+    Cronnables::$last_log = $log;
 
     Cronnables::$duration = $log->duration;
 
     CronnableLogs::flush_old($this->id, $this->log_limit);
 
     return $output;
+  }
+  
+  public function toFormattedArray($deep = true, $prefixKey = false) {
+    $arr = parent::toArray($deep, $prefixKey);
+    
+    $arr["f_url"] = Helper_String::truncate_mid($arr["url"], 50);
+    
+    return $arr;
   }
 }

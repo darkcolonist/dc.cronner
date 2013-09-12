@@ -6,12 +6,13 @@ class Controller_Api_Cronnables extends Fuel\Core\Controller_Rest
 
     if($cronnable){
       $data = array(
-          "cronnable" => $cronnable->toArray()
+          "cronnable" => $cronnable->toFormattedArray()
       );
 
       $data["response"] = $cronnable->execute();
       $data["timestamp"] = date("Y-m-d H:i:s");
       $data["duration"] = Cronnables::$duration;
+      $data["log"] = Cronnables::$last_log->toArray();
     }else{
       $data = array("cronnable not found!");
     }
