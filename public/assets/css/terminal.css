@@ -36,9 +36,11 @@ body{ color: #ddd; }
 .ui-layout-container #output .executing{ color: yellow; font-style: italic }
 .ui-layout-container #output .done{ color: inherit; font-style: inherit }
 .ui-layout-container #output p{ line-height: 11px; }
-.ui-layout-container #output p:hover{ background-color: #3D3D3D; }
+.ui-layout-container #output p.forced{ background: #332424; }
+.ui-layout-container #output p:hover{ background: #3D3D3D; }
 .ui-layout-container #output p a{ color: #4D964C; }
 .ui-layout-container #output p a:hover{ color: #74BF72; text-decoration: none; }
+.ui-layout-container #output p span.o-seq{ color: #2A2A2A; }
 
 .ui-layout-container form{ margin: 0; }
 .ui-layout-container form fieldset{ border: none; border-bottom: 1px dotted #ddd; font-size: .9em; }
@@ -56,6 +58,9 @@ body{ color: #ddd; }
 
 .ui-layout-container .floating-container { display: none; }
 .ui-layout-container .floating-container-clone iframe{ overflow: auto; width: 100%; background: #fff; height: 100%; }
+
+.ui-layout-container .cronnable-tick{ cursor: pointer }
+.ui-layout-container .cronnable-tick:hover{ color: #aaa; text-decoration: underline; }
 
 .ui-dialog .ui-dialog-titlebar{ padding-left: 1px; padding-top: 0; padding-right: 0; padding-bottom: 0; font-size: 10px;}
 

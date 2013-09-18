@@ -12,14 +12,46 @@ Package = {
   _cronnables : null,
   _intervals : null,
   _iteration : null,
+  _max_output : 100,
+  _o_exec : 1,
   getUrl : function(segment){
     return Package.i_baseurl + segment;
   },
-  output : function(text){
-    $("#output").prepend("<p>[<span class='datetime' title='"+ Package.currentTime("YYYY-MM-DD HH:mm:ss")
-        +"'>"+Package.currentTime("HH:mm:ss")+"</span>] "+text+"</p>");
-  }, execute : function(cronnable, ix){
-    Package.output(Package._cronnables[i].f_url+" | status: [<span id='i"+ix+"' class='executing'>executing</span>]");
+  output : function(text, cronnable_obj, add_class){
+    var curClass = "o-"+cronnable_obj.id;
+    
+    $("#output").prepend("<p class='"+curClass+ " " +add_class+"'>[<span class='datetime' title='"
+        + Package.currentTime("YYYY-MM-DD HH:mm:ss")
+        +"'>"+Package.currentTime("HH:mm:ss")+"</span>] "
+        +text+"&nbsp;<span class='o-seq'>"+Package._o_exec+"</span></p>");
+      
+    if(Package.addCronnableRowDomHovering){
+      if("."+curClass != Package.addCronnableRowDomHovered){
+        $("#output ."+curClass).css("opacity", ".2");
+      }
+    }
+    
+    $("#output p:gt("+Package._max_output+")").remove();
+    
+    Package._o_exec ++;
+  }, 
+  execute : function(cronnable, ix, forced){
+    var cronnable_obj = null;
+    
+    for(ctr in Package._cronnables){
+      var cronnable_tmp = Package._cronnables[ctr];
+
+      if(cronnable_tmp.id == cronnable){
+        cronnable_obj = cronnable_tmp;
+      }
+    }
+    
+    var add_class = "";
+    if(forced)
+      add_class = "forced";
+      
+    
+    Package.output(cronnable_obj.f_url+" | status: [<span id='i"+ix+"' class='executing'>executing</span>]", cronnable_obj, add_class);
 
     $.getJSON(Package.getUrl("api/cronnables/execute/")+
           cronnable+".json", function(data){
@@ -56,11 +88,6 @@ Package = {
     Package._moment = moment(Package.i_serverTime);
       // .format("YYYY-MM-DD HH:mm:ss");
 
-    // handle delegates
-    Package.initAddNewCronnable();
-    Package.initFlagCronnable();
-    Package.initResultPopup();
-
     // setup variables
     Package._group = Package.i_groupData;
     Package._cronnables = Package._group.Cronnables;
@@ -88,7 +115,23 @@ Package = {
     Package.fixNotificationPosition();
 
     setInterval(Package.iterator, 1000);
+    
+    // handle delegates
+    Package.initAddNewCronnable();
+    Package.initFlagCronnable();
+    Package.initResultPopup();
+    Package.initForceExecute();
   },
+  initForceExecute : function(){
+    $(document).on("click", ".cronnable-tick", function(e){
+      e.preventDefault();
+      
+      var the_id = $(e.currentTarget).attr("rel");
+      
+      Package.execute(the_id, Package._iteration, true);
+      Package._iteration++;
+    });
+  },  
   initResultPopup : function(){
     
     var resultPopupCounter = 0;
@@ -167,6 +210,8 @@ Package = {
       });
     });
   },
+  addCronnableRowDomHovering : false,
+  addCronnableRowDomHovered : "",
   addCronnableRowDom : function(cronnable){
     // get class
     var row_class = $("#cronnables tr:last").hasClass("odd") ? "even" : "odd";
@@ -174,7 +219,7 @@ Package = {
     var new_cronnable_dom =
         '<tr id="cronnable-row-'+cronnable.id+'" class="'+row_class+'">'
           +'<td><span class="cronnable-url" id="cronnable-url-'+cronnable.id+'" title="'+cronnable.url+'">'+cronnable.f_url+'</span></td>'
-          +'<td id="interval-'+cronnable.id+'" class="align-right"></td>'
+          +'<td class="align-right"><span id="interval-'+cronnable.id+'" class="cronnable-tick" title="run now" rel="'+cronnable.id+'"></span></td>'
         +'</tr>';
     $("#cronnables").append(new_cronnable_dom);
     $("#cronnable-toolbar").find("a.delete").attr("href", Package.getUrl("api/cronnables/delete/"+cronnable.id+".json"));
@@ -183,6 +228,16 @@ Package = {
       content: '#cronnable-toolbar',
       position: 'top',
       hideOnClick: true
+    });
+    
+    $("#cronnable-url-"+cronnable.id).on("mouseover", function(e){
+      Package.addCronnableRowDomHovering = true;
+      Package.addCronnableRowDomHovered = ".o-"+cronnable.id;
+      $("#output p:not("+Package.addCronnableRowDomHovered+")").css("opacity", ".2");
+    }).on("mouseout", function(e){
+      Package.addCronnableRowDomHovering = false;
+      Package.addCronnableRowDomHovered = "";
+      $("#output p").css("opacity", "1");
     });
   },
   tick : function(){

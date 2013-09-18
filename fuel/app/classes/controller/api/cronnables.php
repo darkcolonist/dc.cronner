@@ -32,7 +32,7 @@ class Controller_Api_Cronnables extends Fuel\Core\Controller_Rest
       $cronnable->muted = $cronnable->muted == 0 ? 1 : 0;
       $cronnable->save();
 
-      $data["cronnable"] = $cronnable->toArray();
+      $data["cronnable"] = $cronnable->toFormattedArray();
     }else{
       $data = array(
           "status" => 1,
@@ -53,7 +53,7 @@ class Controller_Api_Cronnables extends Fuel\Core\Controller_Rest
     $cronnable = Doctrine::getTable("Cronnables")->find($id);
 
     if($cronnable){
-      $data["cronnable"] = $cronnable->toArray();
+      $data["cronnable"] = $cronnable->toFormattedArray();
 
       // delete logs first
       Doctrine_Query::create()
