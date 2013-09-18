@@ -56,9 +56,13 @@ Package = {
     $.getJSON(Package.getUrl("api/cronnables/execute/")+
           cronnable+".json", function(data){
       // update iterator status on complete
-      $("#i"+ix).removeClass("executing").addClass("done").html("<a href='"+
+      var dom = "<a href='"+
         Package.getUrl("terminal/output/"+data.log.id)
-        +"' class='btn-result' title='["+ data.log.id + "] " + data.timestamp +" - "+ data.cronnable.url +"'>complete</a> "+data.duration+"s");
+        +"' class='btn-result' title='["+ data.log.id + "] " + data.timestamp 
+        +" - "+ data.cronnable.url +"'>complete</a> "+data.duration+"s"
+        +" <i class='icon-magnet output-pin output-btn' title='preserve'></i>";
+      
+      $("#i"+ix).removeClass("executing").addClass("done").html(dom);
     });
   },
   fixNotificationPosition : function(){
@@ -121,6 +125,20 @@ Package = {
     Package.initFlagCronnable();
     Package.initResultPopup();
     Package.initForceExecute();
+    Package.initPreserveOutput();
+  },
+  initPreserveOutput : function(){
+    $(document).on("click", ".output-pin", function(e){
+      var the_clone = $(e.currentTarget).parent().parent().clone();
+      
+      the_clone.find(".output-pin").replaceWith('<i title="delete" class="icon-fire output-del output-btn"></i>');
+      
+      $("#output-pinned").prepend(the_clone);
+    });
+    
+    $(document).on("click", ".output-del", function(e){
+      $(e.currentTarget).parent().parent().remove();
+    });
   },
   initForceExecute : function(){
     $(document).on("click", ".cronnable-tick", function(e){

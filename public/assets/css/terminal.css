@@ -21,6 +21,8 @@ body{ color: #ddd; }
 
 .ui-layout-pane{ background-color: #2A2A2A; }
 
+.ui-layout-pane.console{ padding: 0; }
+
 .ui-layout-container{ border: 1px dotted #00BF1A; }
 .ui-layout-container table td{ font-size: 10px; }
 .ui-layout-container table td{ padding: 2px 3px; margin: 0 }
@@ -31,16 +33,19 @@ body{ color: #ddd; }
 
 .ui-layout-container .align-right{ text-align: right;}
 
-/*.ui-layout-container #output { height: 300px; overflow-y: scroll; }*/
-.ui-layout-container #output *{ font-family: monospace; margin: 0;}
-.ui-layout-container #output .executing{ color: yellow; font-style: italic }
-.ui-layout-container #output .done{ color: inherit; font-style: inherit }
-.ui-layout-container #output p{ line-height: 11px; }
-.ui-layout-container #output p.forced{ background: #332424; }
-.ui-layout-container #output p:hover{ background: #3D3D3D; }
-.ui-layout-container #output p a{ color: #4D964C; }
-.ui-layout-container #output p a:hover{ color: #74BF72; text-decoration: none; }
-.ui-layout-container #output p span.o-seq{ color: #2A2A2A; }
+/*.ui-layout-container .console-out { height: 300px; overflow-y: scroll; }*/
+.ui-layout-container .console-out *{ font-family: monospace; margin: 0;}
+.ui-layout-container .console-out .executing{ color: yellow; font-style: italic; background: url("../img/inline-loader.gif") no-repeat right; padding-right: 20px; }
+.ui-layout-container .console-out .done{ color: inherit; font-style: inherit }
+.ui-layout-container .console-out p{ line-height: 11px; }
+.ui-layout-container .console-out p.forced{ background: #332424; }
+.ui-layout-container .console-out p:hover{ background: #3D3D3D; }
+.ui-layout-container .console-out p a{ color: #4D964C; }
+.ui-layout-container .console-out p a:hover{ color: #74BF72; text-decoration: none; }
+.ui-layout-container .console-out p span.o-seq{ color: #2A2A2A; }
+.ui-layout-container .console-out .output-btn{ background-color: #828282; border-radius: 3px; cursor: pointer; }
+.ui-layout-container .console-out .output-btn:hover{ background-color: #B2B2B2; }
+.ui-layout-container .console-out span.datetime{ color: #D68989; }
 
 .ui-layout-container form{ margin: 0; }
 .ui-layout-container form fieldset{ border: none; border-bottom: 1px dotted #ddd; font-size: .9em; }

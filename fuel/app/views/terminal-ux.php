@@ -43,13 +43,16 @@
     </div>
   </div>
 
-  <div class="ui-layout-center">
-    <div id="output"></div>
+  <div class="ui-layout-center console">
+    <div id="output" class="console-out"></div>
     <div class="floating-container"></div>
+  </div>
+  <div class="ui-layout-east console">
+    <div id="output-pinned" class="console-out"></div>
   </div>
 
   <div class="ui-layout-south no-padding">
-    <div id="footer"><?= Fuel\Core\Html::anchor("list", "&laquo; back to list") ?> | &copy; darkcolonist 2013</div>
+    <div id="footer"><?= Fuel\Core\Html::anchor("list", "&laquo; back to list") ?> | <span id="moment">&hellip;</span> | cronner 2013 &copy; darkcolonist 2013</div>
   </div>
 
   <?= isset($js) ? $js : null ?>
@@ -70,7 +73,8 @@
         "size" => 400,
         "closable" => true
       ), "east" => array(
-        "size" => 150,
+        "size" => 500,
+        "resizable" => true,
         "closable" => true
       ), "south" => array(
         "size" => 50
