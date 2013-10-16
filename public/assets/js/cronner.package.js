@@ -59,8 +59,7 @@ Package = {
       var dom = "<a href='"+
         Package.getUrl("terminal/output/"+data.log.id)
         +"' class='btn-result' title='["+ data.log.id + "] " + data.timestamp 
-        +" - "+ data.cronnable.url +"'>complete</a> "+data.duration+"s"
-        +" <i class='icon-magnet output-pin output-btn' title='preserve'></i>";
+        +" - "+ data.cronnable.url +"'>complete</a> "+data.duration+"s";
       
       $("#i"+ix).removeClass("executing").addClass("done").html(dom);
     });

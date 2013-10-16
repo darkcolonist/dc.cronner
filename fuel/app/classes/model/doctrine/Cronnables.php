@@ -54,6 +54,11 @@ class Cronnables extends BaseCronnables {
     curl_setopt($ch, CURLOPT_TIMEOUT, 60);
     curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
     $output = curl_exec($ch);
+
+    $errorMsg = '';
+    $errorMsg = curl_error($ch);
+    $errorNumber = curl_errno($ch);
+
     curl_close($ch);
 
     $this->attempts++;
@@ -61,7 +66,7 @@ class Cronnables extends BaseCronnables {
 
     $log = new CronnableLogs;
     $log->Cronnables = $this;
-    $log->result = $output;
+    $log->result = $output . ($errorMsg != null ? "[err:".$errorNumber.",".$errorMsg."]" : "");
     $log->duration = Helper_Date::timer_end();
     $log->save();
     
